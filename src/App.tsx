@@ -1,36 +1,21 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import HomePage from "./pages/Homepage";
-import keycloak from "./Keycloak"
-import { ReactKeycloakProvider } from "@react-keycloak/web";
 import './App.css';
 import React from "react";
+import useAuth from "./hooks/useAuth";
+import Protected from "./pages/Protected";
+import Public from "./pages/Public";
 
 function App() {
-
-  function onKeycloakEvent(e: any) {
-    console.log("onKeycloakEvent", e)
-  }
-
-  function onKeycloakTokens(tokens: unknown) {
-    console.log("Tokens", tokens)
-    // setTokens(tokens)
-  }
-
+  const isLogin = useAuth();
+  
   return (
-    <ReactKeycloakProvider authClient={keycloak}
-      initOptions={{ onLoad: "login-required" }}
-      onEvent={onKeycloakEvent}
-      onTokens={onKeycloakTokens}
-    >
       <React.StrictMode>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={isLogin ? <Protected/> : <Public/> } />
           </Routes>
         </BrowserRouter>
       </React.StrictMode>
-    </ReactKeycloakProvider>
-
   );
 }
 
